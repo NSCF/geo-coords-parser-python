@@ -1,10 +1,10 @@
-from Converter import convert
+from Converter_HS import convert
 test = '27,71372° S 23,07771° E'
 
-converted = convert(test)
+#converted = convert(test)
 
-#try:
-#     converted = convert(test)
-#     print(converted)
-# except Exception as e:
-#     print(e)
+try:
+    converted = convert(test)
+    print(converted)
+except Exception as e:
+    print(e)
