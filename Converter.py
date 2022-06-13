@@ -3,7 +3,7 @@ import math
 # from toCoordinateFormat import *
 
 # Coordinates pattern matching regex
-dd_re = "/(NORTH|SOUTH|[NS])?[\s]*([+-]?[0-8]?[0-9](?:[\.,]\d{3,}))([•º°]?)[\s]*(NORTH|SOUTH|[NS])?[\s]*[,/;]?[\s]*(EAST|WEST|[EW])?[\s]*([+-]?[0-1]?[0-9]?[0-9](?:[\.,]\d{3,}))([•º°]?)[\s]*(EAST|WEST|[EW])?/i"
+dd_re = "(NORTH|SOUTH|[NS])?[\s]*([+-]?[0-8]?[0-9](?:[\.,]\d{3,}))([•º°]?)[\s]*(NORTH|SOUTH|[NS])?[\s]*[,/;]?[\s]*(EAST|WEST|[EW])?[\s]*([+-]?[0-1]?[0-9]?[0-9](?:[\.,]\d{3,}))([•º°]?)[\s]*(EAST|WEST|[EW])?"
 
 # degrees minutes seconds with '.' as separator - gives array with 15 values
 dms_periods = "/(NORTH|SOUTH|[NS])?[\ \t]*([+-]?[0-8]?[0-9])[\ \t]*(\.)[\ \t]*([0-5]?[0-9])[\ \t]*(\.)?[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?(NORTH|SOUTH|[NS])?(?:[\ \t]*[,/;][\ \t]*|[\ \t]*)(EAST|WEST|[EW])?[\ \t]*([+-]?[0-1]?[0-9]?[0-9])[\ \t]*(\.)[\ \t]*([0-5]?[0-9])[\ \t]*(\.)?[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?(EAST|WEST|[EW])?/i"
@@ -34,13 +34,13 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
     match = []
     matchSuccess = False
     
-    if re.search(dd_re, coordsString): # .search() returns only first match
-        match = dd_re.findall(coordsString) # .findall() returns all matches
+    if re.search(dd_re, coordsString, re.I): # .search() returns only first match
+        match = re.match(dd_re, coordsString, re.I) # .findall() returns all matches
         matchSuccess = checkMatch(match)
         
         if matchSuccess:
-            ddLat = match[2]
-            ddLng = match[6]
+            ddLat = match.group(1)
+            ddLng = match.group(5)
             
             # need to fix if there are ','s instead of '.'
             if ',' in ddLat:
@@ -50,12 +50,12 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
                 ddLng = ddLng.replace(',', '.')
             
             # get directions
-            if match[1]:
-                latdir = match[1]
-                lngdir = match[5]
-            elif match[4]:
-                latdir = match[4]
-                lngdir = match[8]
+            if match.group(0):
+                latdir = match.group(0)
+                lngdir = match.group(4)
+            elif match.group(3):
+                latdir = match.group(3)
+                lngdir = match.group(7)
         else:
             raise TypeError("invalid decimal coordinate format") # correct error type? Should it be ValueError?
     
@@ -163,7 +163,7 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
             raise TypeError("invalid coordinates format") # correct error type? Should it be ValueError?
     
     # check longitude value - it can be wrong!
-    if abs(ddLng) >= 180:
+    if abs(float(ddLng)) >= 180:
         raise ValueError("invalid longitude value")
     
     if matchSuccess:
@@ -239,14 +239,21 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
         raise ValueError("coordinates pattern match failed") #correct error type?
 
 def checkMatch(match): #test if the matched groups arrays are 'balanced'. match is the resulting array
-    if not math.isnan(match[0]): #we've matched a number, not what we want..
-        return False
+    #if match.group(0).isnumeric(): #we've matched a number, not what we want..
+     #   return False
     
-    #first remove the empty values from the array
-    filteredMatch = [x for x in match if x != ""] #CHECK THIS
+    #first remove the empty values from the matched groups
+    #filteredMatch = [x for x in match if x != ""] #CHECK THIS
+    groups = match.groups()
+    filteredMatch = []
+    for item in groups:
+        if item is None or item.strip() == "":
+            continue
+        else:
+            filteredMatch.append(item.strip())
 
     #we need to shift the array because it contains the whole coordinates string in the first item
-    newFilteredMatch = filteredMatch.pop(0)
+   # newFilteredMatch = filteredMatch.pop(0)
 
     
     #if minutes or seconds are out of bounds, the array length is wrong
@@ -254,22 +261,19 @@ def checkMatch(match): #test if the matched groups arrays are 'balanced'. match 
     #     return false
     # }
 
-    #then check the array length is an even number else exit
+    #then check the list length is an even number else exit
     if (len(filteredMatch) % 2) > 0:
         return False
 
     #regex for testing corresponding values match
-    numerictest = "/^[-+]?(\d+|\d+\.\d*|\d*\.\d+)$/" #for testing numeric values
-    stringtest = "/[A-Za-z]+/" #strings - the contents of strings are already matched when this is used
+    numerictest = "^[-+]?\d+([\.,]{1}\d+)?$" #for testing numeric values
 
-    halflen = len(newFilteredMatch)/2
-    result = True
-    for i in range(0, halflen+1):
-        if numerictest.search(newFilteredMatch[i]) != numerictest.search(newFilteredMatch[i+halflen]) or stringtest.search(newFilteredMatch[i] != stringtest.search(newFilteredMatch[i+halflen])):
-            result = False
-            break
+    halflen = int(len(filteredMatch)/2)
+    for i in range(0, halflen + 1):
+        if re.match(numerictest, filteredMatch[i]) is None != re.match(numerictest, filteredMatch[i+halflen]) is None:
+            return False
     
-    return result
+    return True
 
 # functions for coordinate validation
 
