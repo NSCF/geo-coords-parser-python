@@ -39,8 +39,8 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
         matchSuccess = checkMatch(match)
         
         if matchSuccess:
-            ddLat = match.group(1)
-            ddLng = match.group(5)
+            ddLat = match.group(2)
+            ddLng = match.group(6)
             
             # need to fix if there are ','s instead of '.'
             if ',' in ddLat:
@@ -50,12 +50,12 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
                 ddLng = ddLng.replace(',', '.')
             
             # get directions
-            if match.group(0):
-                latdir = match.group(0)
-                lngdir = match.group(4)
-            elif match.group(3):
-                latdir = match.group(3)
-                lngdir = match.group(7)
+            if match.group(1):
+                latdir = match.group(1)
+                lngdir = match.group(5)
+            elif match.group(4):
+                latdir = match.group(4)
+                lngdir = match.group(8)
         else:
             raise TypeError("invalid decimal coordinate format") # correct error type? Should it be ValueError?
     
@@ -168,13 +168,13 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
     
     if matchSuccess:
         # make sure the signs and cardinal directions match
-        patt = "/S|SOUTH/i"
-        if patt.search(latdir):
+        patt = "(S|SOUTH/)"
+        if re.search(patt, latdir, re.I):
             if ddLat > 0:
                 ddLat = -1 * ddLat
             
-        patt = "/W|WEST/i;"
-        if patt.search(lngdir):
+        patt = "(W|WEST)"
+        if re.search(patt, lngdir, re.I):
             if ddLng > 0:
                 ddLng = -1 * ddLng
         
