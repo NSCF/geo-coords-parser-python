@@ -8,7 +8,8 @@ dd_re = "(NORTH|SOUTH|[NS])?[\s]*([+-]?[0-8]?[0-9](?:[\.,]\d{3,}))([•º°]?)[\
 
 # degrees minutes seconds with '.' as separator - gives array with 15 values
 #dms_periods = "(NORTH|SOUTH|[NS])?[\ \t]*([+-]?[0-8]?[0-9])[\ \t]*(\.)[\ \t]*([0-5]?[0-9])[\ \t]*(\.)?[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?(NORTH|SOUTH|[NS])?(?:[\ \t]*[,/;][\ \t]*|[\ \t]*)(EAST|WEST|[EW])?[\ \t]*([+-]?[0-1]?[0-9]?[0-9])[\ \t]*(\.)[\ \t]*([0-5]?[0-9])[\ \t]*(\.)?[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?(EAST|WEST|[EW])?"
-dms_periods = "(NORTH|SOUTH|[NS])?[\ \t]*([+-]?[0-8]?[0-9])[\ \t]*(\.)[\ \t]*([0-5]?[0-9])[\ \t]*(\.)?[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?\s*(NORTH|SOUTH|[NS])?(?:[\ \t]*[,/;][\ \t]*|[\ \t]*)(EAST|WEST|[EW])?[\ \t]*([+-]?[0-1]?[0-9]?[0-9])[\ \t]*(\.)[\ \t]*([0-5]?[0-9])[\ \t]*(\.)?[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?\s*(EAST|WEST|[EW])?"
+dms_periods = "(NORTH|SOUTH|[NS])?\s*([+-]?[0-8]?[0-9])\s*(\.)\s*([0-5]?[0-9])\s*(\.)\s*((?:[0-5]?[0-9])(?:[\.,]\d{1,3})?)?\s*(NORTH|SOUTH|[NS])?(?:\s*[,/;]\s*|\s*)(EAST|WEST|[EW])?\s*([+-]?[0-1]?[0-9]?[0-9])\s*(\.)\s*([0-5]?[0-9])\s*(\.)\s*((?:[0-5]?[0-9])(?:[\.,]\d{1,3})?)?\s*(EAST|WEST|[EW])?"
+
 # degrees minutes seconds with words 'degrees, minutes, seconds' as separators (needed because the s of seconds messes with the S of SOUTH) - gives array of 17 values
 dms_abbr = "(NORTH|SOUTH|[NS])?[\ \t]*([+-]?[0-8]?[0-9])[\ \t]*(D(?:EG)?(?:REES)?)[\ \t]*([0-5]?[0-9])[\ \t]*(M(?:IN)?(?:UTES)?)[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?(S(?:EC)?(?:ONDS)?)?[\ \t]*(NORTH|SOUTH|[NS])?(?:[\ \t]*[,/;][\ \t]*|[\ \t]*)(EAST|WEST|[EW])?[\ \t]*([+-]?[0-1]?[0-9]?[0-9])[\ \t]*(D(?:EG)?(?:REES)?)[\ \t]*([0-5]?[0-9])[\ \t]*(M(?:IN)?(?:UTES)?)[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?(S(?:EC)?(?:ONDS)?)[\ \t]*(EAST|WEST|[EW])?"
 
@@ -67,17 +68,25 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
         
         if matchSuccess:
             ddLat = abs(int(match.group(2)))
+
             if match[4]:
                 ddLat += int(match[4])/60
             if match[6]:
-                ddLat += float(match[6])/3600
+                latdec = match[6].replace(',', '.')
+                ddLat += float(latdec)/3600
+
             if int(match.group(2)) < 0:
                 ddLat = -1 * ddLat
+
             ddLng = abs(int(match[9]))
+
             if match[11]:
                 ddLng += int(match[11])/60
             if match[13]:
-                ddLng += float(match[13])/3600
+                lngdec = match[13].replace(',', '.')
+                ddLng += float(lngdec)/3600
+                
+
             if int(match[9]) < 0:
                 ddLng = -1 * ddLng
             
@@ -88,10 +97,12 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
                 latdir = match[7]
                 lngdir = match[14]
 
-            if (latdir or lngdir == '') or latdir == lngdir:
+            #we have to catch an edge case where we have same or missing direction indicators
+            if (latdir == '' or lngdir == '') or (latdir == lngdir):
                raise Exception("invalid DMS coordinates format") 
+            
         else:
-            raise Exception("invalid DMS coordinates format") # correct error type? Should it be ValueError?
+            raise Exception("invalid DMS coordinates format") # correct error type? 
     
 
     elif re.search(dms_abbr, coordsString, re.I):
