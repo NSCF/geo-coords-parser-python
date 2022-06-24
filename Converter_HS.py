@@ -87,6 +87,9 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
             elif match[7]:
                 latdir = match[7]
                 lngdir = match[14]
+
+            if (latdir or lngdir == '') or latdir == lngdir:
+               raise Exception("invalid DMS coordinates format") 
         else:
             raise Exception("invalid DMS coordinates format") # correct error type? Should it be ValueError?
     
