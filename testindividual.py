@@ -6,9 +6,12 @@ from Converter_HS import convert, coordsCloseEnough
 
 #test = '24 05.346S 028 03.289E'
 #test = '22 34 20.55 S 17 05 41.05 E'
-test = '26 45 34 S 23 23 23 E'
-correct =[-27.75944, 23.38972]
-# test = '   27.45637° S  23.123445° E'
+#test = '26 45 34 S 23 23 23 E'
+
+#correct =[-27.75944, 23.38972]
+
+test = '   27.45637  ° S  23.123445 ° E'
+correct = [-27.45637, 23.12345]
 # test = '-25.5589167 31.0113888'
 
 
