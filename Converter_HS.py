@@ -113,24 +113,20 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
             ddLat = abs(int(match.group(2)))
             if match[4]:
                 ddLat += int(match[4])/60
-                if not match[3]:
-                    match[3] = ' '
+                
             if match[6]:
                 ddLat += float(match[6])/3600
-                if not match[5]:
-                    match[5] = ' '
+                
             if int(match.group(2)) < 0:
                 ddLat = -1 * ddLat
             
             ddLng = abs(int(match.group(10)))
             if match[12]:
                 ddLng += int(match[12])/60
-                if not match[11]:
-                    match[11] = ' '
+                
             if match[14]:
                 ddLng += float(match[14])/3600
-                if not match[13]:
-                    match[13] = ' '
+                
             if int(match.group(10)) < 0:
                 ddLng = -1 * ddLng
                             
@@ -151,26 +147,22 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
         if matchSuccess:
             ddLat = abs(int(match.group(2))) # Error "'re.Match' object does not support item assignment"
 
-            if match[4]:
-                ddLat += int(match[4])/60
-                if not match[3]:
-                    match[3] = ' '
+            if match.group(4):
+                ddLat += float(match[4])/60
+                
             if match[6]:
                 ddLat += float(match[6])/3600
-                if not match[5]:
-                    match[5] = ' '
+                
             if int(match.group(2)) < 0:
                     ddLat = -1 * ddLat
             
             ddLng = abs(int(match.group(10)))
             if match[12]:
-                ddLng += int(match[12])/60
-                if not match[11]:
-                    match[11] = ' '
+                ddLng += float(match[12])/60
+                
             if match[14]:
                 ddLng += float(match[14])/3600
-                if not match[13]:
-                    match[13] = ' '
+               
             if int(match.group(10)) < 0:
                     ddLat = -1 * ddLng
                        
@@ -256,7 +248,7 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
 
         ddLng = round(ddLng, decimalPlaces)
 
-        return [ddLat,ddLng]  
+        return [ddLat, ddLng]  
         
     else:
         raise Exception("coordinates pattern match failed") #correct error type?
@@ -303,21 +295,18 @@ def checkMatch(match): #test if the matched groups arrays are 'balanced'. match 
 def decimalsCloseEnough(dec1, dec2):
     originaldiff = abs(dec1 - dec2)
     diff = int(round(originaldiff, 6))
-    if diff == 0.00001:
+    if diff <= 0.00001:
         return True
     else:
         return False
 
-def coordsCloseEnough(coordsToTest):
-    if ',' in coordsToTest:
-        coords = coordsToTest.split(',')
-        if math.isnan(int(coords[0])) == True or math.isnan(int(coords[1])) == True:
-            raise Exception("coords are not valid decimals") # check is error type is correct
-        # else:
-            # return decimalsCloseEnough(this.decimalLatitude, int(coords[0])) and decimalsCloseEnough(this.decimalLongitude, coords[1]) # this here will be the converted coordinates object
-            # CHECK HOW TO DO .this IN PYTHON
+def coordsCloseEnough(convertedLatitude, convertedLongitude, correctLatitude, correctLongitude):
+    if isinstance(convertedLatitude, float) and isinstance(convertedLongitude, float) and isinstance(correctLatitude, float) and isinstance(correctLongitude, float):
+        return decimalsCloseEnough(convertedLatitude, correctLatitude) and decimalsCloseEnough(convertedLongitude, correctLongitude) # this here will be the converted coordinates object
     else:
-        raise Exception("coords being tested must be separated by a comma") # check if error type is correct
+        raise Exception("coords are not valid decimals")
+  
+        
 
 
 
