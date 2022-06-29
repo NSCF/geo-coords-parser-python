@@ -11,7 +11,7 @@ dd_re = "(NORTH|SOUTH|[NS])?[\s]*([+-]?[0-8]?[0-9](?:[\.,]\d{3,}))[\s]*([•º°
 dms_periods = "(NORTH|SOUTH|[NS])?\s*([+-]?[0-8]?[0-9])\s*(\.)\s*([0-5]?[0-9])\s*(\.)\s*((?:[0-5]?[0-9])(?:[\.,]\d{1,3})?)?\s*(NORTH|SOUTH|[NS])?(?:\s*[,/;]\s*|\s*)(EAST|WEST|[EW])?\s*([+-]?[0-1]?[0-9]?[0-9])\s*(\.)\s*([0-5]?[0-9])\s*(\.)\s*((?:[0-5]?[0-9])(?:[\.,]\d{1,3})?)?\s*(EAST|WEST|[EW])?"
 
 # degrees minutes seconds with words 'degrees, minutes, seconds' as separators (needed because the s of seconds messes with the S of SOUTH) - gives array of 17 values
-dms_abbr = "(NORTH|SOUTH|[NS])?[\ \t]*([+-]?[0-8]?[0-9])[\ \t]*(D(?:EG)?(?:REES)?)[\ \t]*([0-5]?[0-9])[\ \t]*(M(?:IN)?(?:UTES)?)[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?(S(?:EC)?(?:ONDS)?)?[\ \t]*(NORTH|SOUTH|[NS])?(?:[\ \t]*[,/;][\ \t]*|[\ \t]*)(EAST|WEST|[EW])?[\ \t]*([+-]?[0-1]?[0-9]?[0-9])[\ \t]*(D(?:EG)?(?:REES)?)[\ \t]*([0-5]?[0-9])[\ \t]*(M(?:IN)?(?:UTES)?)[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?(S(?:EC)?(?:ONDS)?)[\ \t]*(EAST|WEST|[EW])?"
+dms_abbr = "(NORTH|SOUTH|[NS])?[\ \t]*([+-]?[0-8]?[0-9])[\s]*[\ \t]*(D(?:EG)?(?:REES)?)[\ \t]*([0-5]?[0-9])[\s]*[\ \t]*(M(?:IN)?(?:UTES)?)[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?[\s]*(S(?:EC)?(?:ONDS)?)?[\ \t]*(NORTH|SOUTH|[NS])?(?:[\ \t]*[,/;][\ \t]*|[\ \t]*)(EAST|WEST|[EW])?[\ \t]*([+-]?[0-1]?[0-9]?[0-9])[\ \t]*[\s]*(D(?:EG)?(?:REES)?)[\ \t]*([0-5]?[0-9])[\ \t]*[\s]*(M(?:IN)?(?:UTES)?)[\ \t]*((?:[0-5]?[0-9])(?:\.\d{1,3})?)?[\s]*(S(?:EC)?(?:ONDS)?)[\ \t]*(EAST|WEST|[EW])?"
 
 #everything else - gives array of 17 values; ADDED BACK SLASHES FOR INVERTED COMMAS!
 coords_other = "(NORTH|SOUTH|[NS])?[\ \t]*([+-]?[0-8]?[0-9])[\ \t]*([•º°\.:]|D(?:EG)?(?:REES)?)?[\ \t]*,?([0-5]?[0-9](?:\.\d{1,})?)?[\ \t]*(['′´’\.:]|M(?:IN)?(?:UTES)?)?[\ \t]*,?((?:[0-5]?[0-9])(?:\.\d{1,3})?)?[\ \t]*(''|′′|’’|´´|[\"″”\.])?[\ \t]*(NORTH|SOUTH|[NS])?(?:\s*[,/;]\s*|\s*)(EAST|WEST|[EW])?[\ \t]*([+-]?[0-1]?[0-9]?[0-9])[\ \t]*([•º°\.:]|D(?:EG)?(?:REES)?)?[\ \t]*,?([0-5]?[0-9](?:\.\d{1,})?)?[\ \t]*(['′´’\.:]|M(?:IN)?(?:UTES)?)?[\ \t]*,?((?:[0-5]?[0-9])(?:\.\d{1,3})?)?[\ \t]*(''|′′|´´|’’|[\"″”\.])?[\ \t]*(EAST|WEST|[EW])?"
@@ -25,7 +25,7 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
     # TODO add exact match to entered string, so that it can be used to filter out superflous text around it
     # if not decimalPlaces:
     #     decimalPlaces = 5
-    # why comment out this if statement?
+  
     
     coordsString = re.sub("/\s+/", " ", coordsString).strip(); #just to tidy up whitespaces
     
@@ -59,7 +59,7 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
                 latdir = match.group(4)
                 lngdir = match.group(8)
         else:
-            raise Exception("invalid decimal coordinate format") # correct error type? Should it be ValueError?
+            raise Exception("invalid decimal coordinate format") 
     
 
     elif re.search(dms_periods, coordsString, re.I):
@@ -102,7 +102,7 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
                raise Exception("invalid DMS coordinates format") 
             
         else:
-            raise Exception("invalid DMS coordinates format") # correct error type? 
+            raise Exception("invalid DMS coordinates format") 
     
 
     elif re.search(dms_abbr, coordsString, re.I):
@@ -137,7 +137,7 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
                 latdir = match[8]
                 lngdir = match[16]
         else:
-            raise Exception("invalid DMS coordinates format") # correct error type? 
+            raise Exception("invalid DMS coordinates format") 
     
 
     elif re.search(coords_other, coordsString, re.I):
@@ -145,7 +145,7 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
         matchSuccess = checkMatch(match)
         
         if matchSuccess:
-            ddLat = abs(int(match.group(2))) # Error "'re.Match' object does not support item assignment"
+            ddLat = abs(int(match.group(2))) 
 
             if match.group(4):
                 ddLat += float(match[4])/60
@@ -173,7 +173,7 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
                 latdir = match[8]
                 lngdir = match[16]
         else:
-            raise Exception("invalid coordinates format") # correct error type? 
+            raise Exception("invalid coordinates format") 
     
     # check longitude value - it can be wrong!
     if abs(float(ddLng)) >= 180:
@@ -197,7 +197,7 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
         # we can't split down the middle because if there are decimals they may have different numbers on each side
         # so we need to find the separating character, or if none, use the match values to split down the middle
 
-        # verbatimCoordinates = match[0].strip()
+        # verbatimCoordinates = match[0].strip()# 're.Match' object has no attribute 'strip'
         # verbatimLat = None
         # verbatimLng = None
         # sepChars = "/[,/;\u0020]/g" #comma, forward slash and spacebar
@@ -217,10 +217,10 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
         #     else:
         #         middle = (len(seps)/2) -1
             
-        #     # walk through seps until we get to the middle
+        # #     # walk through seps until we get to the middle
         #     splitIndex = 0
 
-        #     # it might be only one value
+        # #     # it might be only one value
         #     if middle == 0:
         #         splitIndex = verbatimCoordinates.index(seps[0])
         #         verbatimLat = verbatimCoordinates[0:splitIndex].strip()
@@ -251,7 +251,7 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
         return [ddLat, ddLng]  
         
     else:
-        raise Exception("coordinates pattern match failed") #correct error type?
+        raise Exception("coordinates pattern match failed") 
 
 def checkMatch(match): #test if the matched groups arrays are 'balanced'. match is the resulting array
         
@@ -289,7 +289,6 @@ def checkMatch(match): #test if the matched groups arrays are 'balanced'. match 
             return False
 
 # functions for coordinate validation
-
 # as decimal arithmetic is not straightforward, we approximate
 
 def decimalsCloseEnough(dec1, dec2):
