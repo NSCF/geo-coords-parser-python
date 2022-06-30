@@ -164,7 +164,7 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
                 ddLng += float(match[14])/3600
                
             if int(match.group(10)) < 0:
-                    ddLat = -1 * ddLng
+                    ddLng = -1 * ddLng
                        
             if match[1]:
                 latdir = match[1]
