@@ -1,25 +1,25 @@
 from Converter_HS import convert, coordsCloseEnough
 import json
 
-# with open("testFormats.json", encoding='utf-8') as file:
-#     test = json.load(file)
+with open("testFormats.json", encoding='utf-8') as file:
+    test = json.load(file)
 
-# allPassed = True
+allPassed = True
 
-# for dict in test:
-#     try:
-#         converted = convert(dict.get("verbatimCoordinates"))
-#         #print(converted)
-#         correctlyConverted = coordsCloseEnough(converted[0],converted[1],dict.get("decimalLatitude"),dict.get("decimalLongitude"))
-#         if not correctlyConverted:
-#             print(str(dict) + str(converted[0]) + ' ' + str(converted[1]) +" " + "Conversion was incorrect") 
-#             allPassed = False        
-#     except Exception as e:
-#         print('converter threw exception for', dict.get("verbatimCoordinates"))
-#         allPassed = False
+for dict in test:
+    try:
+        converted = convert(dict.get("verbatimCoordinates"))
+        #print(converted)
+        correctlyConverted = coordsCloseEnough(converted[0],converted[1],dict.get("decimalLatitude"),dict.get("decimalLongitude"))
+        if not correctlyConverted:
+            print(str(dict) + str(converted[0]) + ' ' + str(converted[1]) +" " + "Conversion was incorrect") 
+            allPassed = False        
+    except Exception as e:
+        print('converter threw exception for', dict.get("verbatimCoordinates"))
+        allPassed = False
 
-# if(allPassed):
-#     print('All coordinates converted successfully')
+if(allPassed):
+    print('All coordinates converted successfully')
 
 
 failingFormats = [
@@ -43,12 +43,14 @@ def formatTest(list):
             converted = convert(x[0])
             #print(converted)
             correctlyConverted = coordsCloseEnough(converted[0],converted[1],x[0],x[1])
-            if not correctlyConverted:
-                print(x + str(converted[0]) + ' ' + str(converted[1]) +" " + "Conversion was incorrect") 
+            if correctlyConverted:
+                print(x + str(converted[0]) + ' ' + str(converted[1]) +" " + "Conversion was correct") 
                 allPassed = False        
         except Exception as e:
-            print('converter threw exception for', x)
+            # print(e)
             allPassed = False
+    if(allPassed) ==False:
+        print('All coordinates of failingformats failed')
 
 formatTest(failingFormats)
 
