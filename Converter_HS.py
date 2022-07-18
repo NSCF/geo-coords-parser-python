@@ -197,9 +197,9 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
         # we can't split down the middle because if there are decimals they may have different numbers on each side
         # so we need to find the separating character, or if none, use the match values to split down the middle
 
-        # verbatimCoordinates = match[0].strip()# 're.Match' object has no attribute 'strip'
-        # verbatimLat = None
-        # verbatimLng = None
+        verbatimCoordinates = match[0].strip()
+        verbatimLat = None
+        verbatimLng = None
         # sepChars = "/[,/;\u0020]/g" #comma, forward slash and spacebar
         # seps = verbatimCoordinates.match(sepChars)
 
@@ -248,7 +248,14 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
 
         ddLng = round(ddLng, decimalPlaces)
 
-        return [ddLat, ddLng]  
+        return {
+            "verbatimCoordinates":verbatimCoordinates,
+            "verbatimLatitude":verbatimLat,
+            "verbatimLongitude":verbatimLng,
+            "decimalLatitude":ddLat, 
+            "decimalLongitude":ddLng,
+            "decimalCoordinates":str(ddLat) + ", " + str(ddLng)
+            }  
         
     else:
         raise Exception("coordinates pattern match failed") 
