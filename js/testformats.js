@@ -225,7 +225,14 @@ var coordsRegexFormats = [
     verbatimLongitude: '-74.123256',
     decimalLatitude: 40.123256, 
     decimalLongitude: -74.123256 
-  }  
+  },
+  {
+    verbatimCoordinates: '18°24S 22°45E', //this is read as degrees and minutes
+    verbatimLatitude: '18°24S', 
+    verbatimLongitude: '22°45E', 
+    decimalLatitude: -18.4,
+    decimalLongitude: 22.75
+  } 
 ]
 
 var otherFormats = [
@@ -265,6 +272,34 @@ var otherFormats = [
     verbatimLongitude: '18.32.53E',
     decimalLatitude: -27.2625,
     decimalLongitude: 18.548055
+  },
+  {
+    verbatimCoordinates: '-27.15.45 18.32.53',
+    verbatimLatitude: '-27.15.45', 
+    verbatimLongitude: '18.32.53',
+    decimalLatitude: -27.2625,
+    decimalLongitude: 18.548055
+  }, 
+  {
+    verbatimCoordinates: '27.15.45.2S 18.32.53.4E',
+    verbatimLatitude: '27.15.45.2S', 
+    verbatimLongitude: '18.32.53.4E',
+    decimalLatitude: -27.262556,
+    decimalLongitude: 18.548167
+  }, 
+  {
+    verbatimCoordinates: '27.15.45,2S 18.32.53,4E',
+    verbatimLatitude: '27.15.45,2S', 
+    verbatimLongitude: '18.32.53,4E',
+    decimalLatitude: -27.262556,
+    decimalLongitude: 18.548167
+  }, 
+  {
+    verbatimCoordinates: 'S23.43563 °  E22.45634 °', //decimals with spaces before the symbol!!
+    verbatimLatitude: 'S23.43563 °', 
+    verbatimLongitude: 'E22.45634 °',
+    decimalLatitude: -23.43563,
+    decimalLongitude: 22.45634
   }, 
   {
     verbatimCoordinates: '27,71372° S 23,07771° E', //decimals with commas
@@ -272,27 +307,24 @@ var otherFormats = [
     verbatimLongitude: '23,07771° E',
     decimalLatitude: -27.71372,
     decimalLongitude: 23.07771
+  }, 
+  {
+    verbatimCoordinates: '27.45.34 S 23.23.23 E',
+    verbatimLatitude: '27.45.34 S', 
+    verbatimLongitude: '23.23.23 E',
+    decimalLatitude: -27.759444,
+    decimalLongitude: 23.38972222
+  }, 
+  {
+    verbatimCoordinates: 'S 27.45.34 E 23.23.23',
+    verbatimLatitude: 'S 27.45.34', 
+    verbatimLongitude: 'E 23.23.23',
+    decimalLatitude: -27.759444,
+    decimalLongitude: 23.38972222
   }
 ]
 
-let userProvidedFormats = [
-  {
-    //issue https://github.com/ianengelbrecht/geo-coordinates-parser/issues/1
-    verbatimCoordinates: 'N 52d0m0s E 000d0m0s',
-    verbatimLatitude: 'N 52d0m0s', 
-    verbatimLongitude: 'E 000d0m0s',
-    decimalLatitude: 52.00000,
-    decimalLongitude: 0.0000
-  },
-  {
-    // https://github.com/ianengelbrecht/geo-coordinates-parser/issues/1
-    verbatimCoordinates: 'N49 0.000 E02 33.314',
-    verbatimLatitude: 'N49 0.000', 
-    verbatimLongitude: 'E02 33.314',
-    decimalLatitude: 49.00000,
-    decimalLongitude: 2.5552333333333333
-  }
-]
+
 
 function getAllTestFormats() {
   var arr1 = []
@@ -305,7 +337,7 @@ function getAllTestFormats() {
     }
   })
   
-  return [...arr1, ...coordsRegexFormats, ...otherFormats, ...userProvidedFormats]
+  return [...arr1, ...coordsRegexFormats, ...otherFormats]
  
 }
 
