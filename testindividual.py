@@ -8,9 +8,9 @@ from Converter_HS import convert, coordsCloseEnough
 #test = '22 34 20.55S 17 05 41.05E'
 # test = '26 45 34 S 23 23 23 E'
 
-#correct =[-27.75944, 23.38972]
+#correct =[-27.75944 23.38972]
 
-test = '   27.45637  ° S  23.123445 ° E'
+test = '   27.45637 ° S; 23.123445 ° E'
 testlat = "27.45637 ° S"
 testlng = "23.123445 ° E"
 correct = [-27.45637, 23.12345]
@@ -30,8 +30,8 @@ try:
     
     correctverbatim = testlat == converted["verbatimLatitude"] and testlng == converted["verbatimLongitude"]
     if correctverbatim:
-        print("verbatim was correct")
+        print("Verbatim was correct")
     else:
-        print("verbatim was incorrect")
+        print("Verbatim was incorrect")
 except Exception as e:
     print(e)

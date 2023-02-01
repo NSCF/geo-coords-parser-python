@@ -10,9 +10,9 @@ for dict in test:
     try:
         converted = convert(dict.get("verbatimCoordinates"))
         #print(converted)
-        correctlyConverted = coordsCloseEnough(converted[0],converted[1],dict.get("decimalLatitude"),dict.get("decimalLongitude"))
+        correctlyConverted = coordsCloseEnough(converted["decimalLatitude"],converted["decimalLongitude"],dict.get("decimalLatitude"),dict.get("decimalLongitude"))
         if not correctlyConverted:
-            print(str(dict) + str(converted[0]) + ' ' + str(converted[1]) +" " + "Conversion was incorrect") 
+            print(str(dict) + str(converted["decimalLatitude"]) + ' ' + str(converted["decimalLongitude"]) +" " + "Conversion was incorrect") 
             allPassed = False        
     except Exception as e:
         print('converter threw exception for', dict.get("verbatimCoordinates"))

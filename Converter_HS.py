@@ -192,31 +192,41 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
         if re.search(patt, lngdir, re.I):
             if ddLng > 0:
                 ddLng = -1 * ddLng
-        
+
+
         # we need to get the verbatim coords from the string
         # we can't split down the middle because if there are decimals they may have different numbers on each side
         # so we need to find the separating character, or if none, use the match values to split down the middle
-
         verbatimCoordinates = match[0].strip()
         verbatimLat = None
         verbatimLng = None
-        # sepChars = "/[,/;\u0020]/g" #comma, forward slash and spacebar
-        # seps = verbatimCoordinates.match(sepChars)
 
-        # if seps == None:
-        #     # split down the middle
-        #     middle = len(coordsString)/2
-        #     verbatimLat = verbatimCoordinates[0:middle].strip()
-        #     verbatimLng = verbatimCoordinates[middle].strip()
-        # else:          # if length is odd then find the index of the middle value
-        #     #get the middle index
-        #     middle = None
-        #     #easy for odd numbers
-        #     if (len(seps) % 2) == 1:
-        #         middle = len(seps)/2
-        #     else:
-        #         middle = (len(seps)/2) -1
-            
+        sepChars = "[,;\s+/]" #comma, forward slash and spacebar
+        seps = re.findall(sepChars, verbatimCoordinates, re.I)
+
+        if seps == None:
+            # split down the middle
+            middle = int(len(coordsString)/2)
+            verbatimLat = verbatimCoordinates[:middle].strip()
+            verbatimLng = verbatimCoordinates[middle:].strip()
+        else:  
+            # get the middle index
+            if len(seps) == 1:
+                middle = verbatimCoordinates.index(seps)
+                verbatimLat = verbatimCoordinates[:(middle-1)].strip
+                verbatimLng = verbatimCoordinates[(middle+1):].strip
+             # if length is odd then find the index of the middle value
+            if (len(seps) % 2) == 1:
+                middle = len(seps)//2 + 1
+                verbatimLat = verbatimCoordinates[:(middle-1)].strip
+                verbatimLng = verbatimCoordinates[(middle+1):].strip
+
+            else:
+                middle = (len(seps)/2) -1
+                verbatimLat = verbatimCoordinates[:(middle-1)].strip
+                verbatimLng = verbatimCoordinates[(middle+1):].strip
+
+                
         # #     # walk through seps until we get to the middle
         #     splitIndex = 0
 
