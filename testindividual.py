@@ -1,4 +1,4 @@
-from Converter_HS import convert, coordsCloseEnough
+from converter import convert, coordsCloseEnough
 
 
 #test = '27.15.45,2 S 18.32.53,4 E'
@@ -7,17 +7,15 @@ from Converter_HS import convert, coordsCloseEnough
 #test = '24 05.346 S 028 03.289  E'
 #test = '22 34 20.55S 17 05 41.05E'
 # test = '26 45 34 S 23 23 23 E'
+# test = '-25.5589167 31.0113888'
 
-#correct =[-27.75944 23.38972]
 
 test = '   27.45637 ° S; 23.123445 ° E'
 testlat = "27.45637 ° S"
 testlng = "23.123445 ° E"
 correct = [-27.45637, 23.12345]
-# test = '-25.5589167 31.0113888'
 
 
-#converted = convert(test)
 
 try:
     converted = convert(test)
