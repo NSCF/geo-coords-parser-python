@@ -243,29 +243,37 @@ def convert(coordsString, decimalPlaces=5): #why use convert instead of converte
 def checkMatch(match): #test if the matched groups arrays are 'balanced'. match is the resulting array
       
   groups = match.groups()
-  filteredMatch = []
-  for item in groups:
-    if item is None or item.strip() == "":
-      continue
-    else:
-      filteredMatch.append(item.strip())                 
+  filteredMatch = filter(lambda x: x is not None and x.strip() != "", groups)  
+  filteredMatch = list(map(lambda x: x.strip(), filteredMatch))
 
   #then check the array length is an even number else exit
-  if (len(filteredMatch) % 2) > 0:
+  if len(filteredMatch) % 2 > 0:
     return False
 
   #regex for testing corresponding values match
-  numerictest = "^[-+]?\d+([\.,]{1}\d+)$" #for testing numeric values
+  numerictest = "^[-+]?\d+([\.,]{1}\d+)?$" #for testing numeric values
+  dirtest = "[eastsouthnorthwest]+"
   
-  halflen = int(len(filteredMatch)/2)
+  halflen = len(filteredMatch)//2
   
-  for i in range(0, halflen+1):
+  for i in range(0, halflen):
     leftside = filteredMatch[i]
     rightside = filteredMatch[i + halflen]
-    if ((re.match(numerictest, leftside) and re.match(numerictest, rightside)) or (type(leftside)== str and type(rightside) == str) or leftside == rightside):
-      return True
+    botharenumbers = re.match(numerictest, leftside) is not None and re.match(numerictest, rightside) is not None
+    botharedirs = re.match(dirtest, leftside, re.I) is not None and re.match(dirtest, rightside, re.I) is not None
+    valuesareequal = leftside == rightside
+
+    if botharenumbers or botharedirs or valuesareequal:
+      continue
     else:
       return False
+
+  return True
+
+    # if ((re.match(numerictest, leftside) and re.match(numerictest, rightside)) or (type(leftside)== str and type(rightside) == str) or leftside == rightside):
+    #   return True
+    # else:
+    #   return False
 
 # functions for coordinate validation
 # as decimal arithmetic is not straightforward, we approximate
